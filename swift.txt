@@ -1,0 +1,160 @@
+import Foundation
+import Glibc
+ 
+class TrieNode {
+  var isTerminating = false
+  var value: Character?
+  var children: [Character: TrieNode] = [:]
+  
+  init(value:Character? = nil) {
+    self.value = value
+  }
+  func add(child: Character) {
+    guard children[child] == nil else { return }
+    children[child] = TrieNode(value: child)
+  }
+}
+
+class Trie {
+  let root: TrieNode
+  init() {
+    root = TrieNode()
+  }
+  
+  func insert(word: String) {
+    var currentNode = root
+    let characters = Array(word.characters)
+    var currentIndex = 0
+
+  
+    while currentIndex < characters.count {
+ 
+      let character = characters[currentIndex]
+
+      if let child = currentNode.children[character] {
+        currentNode = child
+      } else {
+     
+        currentNode.add(child: character)
+        currentNode = currentNode.children[character]!
+      }
+      
+    currentIndex += 1
+    }
+  currentNode.isTerminating = true
+}
+
+  func contains(word: String) -> Int {
+    var currentNode = root
+
+    let characters = Array(word.characters)
+    var currentIndex = 0
+
+    while currentIndex < characters.count{
+    if let child = currentNode.children[characters[currentIndex]] {
+      currentIndex += 1
+      currentNode = child
+      }
+    else{
+      return 2 // is not existed
+      }
+    }
+    if currentIndex == characters.count && currentNode.isTerminating {
+      return 0 // is existed
+    } else {
+     return 1 // maybe it is existed
+    }
+  }
+}
+
+
+let trie = Trie()
+
+trie.insert(word: "cute") 
+print(trie.contains(word: "cut"))  // 1
+print(trie.contains(word: "cute")) // 0
+print(trie.contains(word: "cuted")) // 2
+print(trie.contains(word: "cup")) // 2
+
+let words = (readLine() ?? "").characters.split{$0 == " "}.map(String.init) 
+// print("\(words[0])")
+for word in words {
+    trie.insert(word:word)
+}
+let dimentions = (readLine() ?? "").characters.split{$0 == " "}.map(String.init)
+// print("\(dimentions[0])")
+var matrix : [[String]] = []
+if let n = Int(dimentions[0]) { 
+  for _ in 0...n-1 {
+    let nodeArray = (readLine() ?? "").characters.split{$0 == " "}.map(String.init)
+        matrix.append(nodeArray)
+  }
+}
+print("\(matrix)\n")
+print("nar"+"s")
+
+
+struct node{
+    var node_id: Int
+    var node_char: String
+    var neighbors = [Int]()
+}
+
+func DFS(nodes: [node], s: node){
+    var parent = [Int: Int]()
+    parent[s.node_id] = nil
+    visit(nodes: nodes, s: s, parent: &parent , word : "")
+}
+func visit(nodes: [node], s: node, parent: inout [Int: Int] , word : String){
+    for v in s.neighbors{
+        if parent[v] == nil{
+            parent[v] = s.node_id
+            print("\(word)")
+            print(trie.contains(word: word))
+            visit(nodes: nodes, s: nodes[v], parent: &parent , word : word+nodes[v].node_char)
+        }
+    }
+    parent[s.node_id] = nil
+}
+
+
+
+
+var nodes = [node]()
+var count = 0
+var x_len = matrix[0].count
+var y_len = matrix.count
+for i in 0...y_len-1{
+    for j in 0...x_len-1{
+        nodes.append(node(node_id:count, node_char: matrix[i][j], neighbors:[]))
+        if i - 1 > -1  && j - 1 > -1  {
+            nodes[count].neighbors.append((i - 1)*x_len + j - 1)
+        }
+        if i - 1 > -1 && j < x_len {
+            nodes[count].neighbors.append((i - 1)*x_len + j)
+        }
+        if i - 1 > -1 && j + 1 < x_len {
+            nodes[count].neighbors.append((i - 1)*x_len + j + 1)
+        }
+        if i < y_len && j - 1 > -1 {
+            nodes[count].neighbors.append((i)*x_len + j - 1)
+        }
+        if i  < y_len && j + 1 < x_len {
+            nodes[count].neighbors.append((i)*x_len + j + 1)
+        }
+        if i + 1 < y_len && j - 1 > -1 {
+            nodes[count].neighbors.append((i + 1)*x_len + j - 1)
+        }
+        if i + 1 < y_len && j < x_len {
+            nodes[count].neighbors.append((i + 1)*x_len + j)
+        }
+        if i + 1 < y_len && j + 1 < x_len {
+            nodes[count].neighbors.append((i + 1)*x_len + j + 1)
+        }
+        count = count + 1
+    }
+}
+DFS(nodes: nodes, s: nodes[0])
+
+
+
