@@ -70,11 +70,6 @@ class Trie {
 
 let trie = Trie()
 
-trie.insert(word: "cute") 
-print(trie.contains(word: "cut"))  // 1
-print(trie.contains(word: "cute")) // 0
-print(trie.contains(word: "cuted")) // 2
-print(trie.contains(word: "cup")) // 2
 
 let words = (readLine() ?? "").characters.split{$0 == " "}.map(String.init) 
 // print("\(words[0])")
